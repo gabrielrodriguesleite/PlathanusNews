@@ -4,7 +4,19 @@ App de cadastro de notícias. Projeto técnico para vaga Desenvolvedor Full Stac
 
 ## Obter o código fonte do projeto
 
+```sh
+git clone git@github.com:gabrielrodriguesleite/PlathanusNews.git
+```
+
 ## Testes
+
+### Backend
+
+```sh
+cd backend
+npm i
+npm test
+```
 
 ## Como rodar a aplicação localmente
 
@@ -16,7 +28,7 @@ App de cadastro de notícias. Projeto técnico para vaga Desenvolvedor Full Stac
 
 ## Database - Sqlite3 & Postgress
 
-## Instruções do projeto conforme recebido:
+## Instruções do projeto conforme recebido
 
 1. Desenvolvimento deverá ocorrer preferencialmente em React.
 2. Após finalizar o desenvolvimento subir no github o código fonte e o Readme com as orientações.

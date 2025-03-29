@@ -2,7 +2,7 @@
   "name": "pathanus-news-backend",
   "version": "1.0.0",
   "description": "api de notícias",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest --watchAll",
     "migrate:up": "npx sequelize-cli db:migrate",
