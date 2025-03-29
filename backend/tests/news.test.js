@@ -21,7 +21,7 @@ describe("API de Notícias", () => {
       const res = await request(app).get('/app')
       expect(res.status).toBe(200)
       expect(res.body).toHaveProperty("message")
-      expect(res.body.message).toEqual("api ok")
+      expect(res.body.message).toEqual("app ok")
     })
   })
 
