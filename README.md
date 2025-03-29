@@ -17,9 +17,15 @@ cd backend
 npm i
 mv .env_example .env
 npm test
-
-O arquivo .env precisa conter um valor para JWT_SECRET
 ```
+O arquivo .env precisa conter um valor para JWT_SECRET
+
+<table width="100%">
+  <tr>
+     <td><img src="./assets/test-news.png"/></td>
+     <td><img src="./assets/test-auth.png"/></td>
+  </tr>
+</table>
 
 ## Como rodar a aplicação localmente
 
