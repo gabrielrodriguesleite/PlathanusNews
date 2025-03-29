@@ -20,6 +20,15 @@ npm test
 
 ## Como rodar a aplicação localmente
 
+### Inicie o backend
+
+```sh
+cd backend
+npm start
+```
+
+acesse `http://localhost:3000` deve mostrar o status 200 e um json `message: "api ok"`
+
 ## Instruções de uso
 
 ## Backend - Node.js
