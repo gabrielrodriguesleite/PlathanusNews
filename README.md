@@ -15,7 +15,10 @@ git clone git@github.com:gabrielrodriguesleite/PlathanusNews.git
 ```sh
 cd backend
 npm i
+mv .env_example .env
 npm test
+
+O arquivo .env precisa conter um valor para JWT_SECRET
 ```
 
 ## Como rodar a aplicação localmente
