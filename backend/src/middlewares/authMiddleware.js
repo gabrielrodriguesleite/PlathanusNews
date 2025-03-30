@@ -12,7 +12,8 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.userId = decoded.id
+    req.userId = decoded.userId
+
     return next()
   } catch (error) {
     return res.status(403).json({ error: "Token inválido." })
