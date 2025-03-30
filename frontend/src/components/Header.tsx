@@ -13,6 +13,7 @@ export default function Header() {
   if (user.email == "") {
     return (
       <header>
+        <h1>Plathanus News</h1>
         <div className="expand"></div>
         <button onClick={() => navigate('/login')}>Entrar</button>
         <button onClick={() => navigate('/register')} className="btn-secondary">Registrar</button>
@@ -22,6 +23,7 @@ export default function Header() {
 
   return (
     <header>
+      <h1>Plathanus News</h1>
       <div className="expand"></div>
       <div className="p-box"><p>{user.email}</p></div>
       <button onClick={() => logout()}>Logout</button>

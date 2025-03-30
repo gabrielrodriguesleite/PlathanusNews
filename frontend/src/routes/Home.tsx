@@ -9,7 +9,6 @@ export default function Home() {
     <>
       <Header />
       <main>
-        <h1>Início</h1>
         <News />
       </main>
       <Footer />

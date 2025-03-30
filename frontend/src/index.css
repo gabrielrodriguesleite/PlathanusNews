@@ -1,5 +1,5 @@
 :root {
-  font-family: sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
   color: #F7F7F7;
   background-color: #1A202C;
@@ -45,6 +45,12 @@ header {
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem;
+  padding-left: 1rem;
+  color: #fff;
+}
+
+header h1::first-letter {
+  color: #00FF9C;
 }
 
 .expand {
@@ -72,6 +78,17 @@ article {
   flex-direction: column;
   justify-content: center;
   gap: 1rem;
+  width: 100%;
+  padding-top: 1rem;
+}
+
+article h2,
+p {
+  margin: 0 auto;
+}
+
+article button {
+  margin: 0 0 0 auto;
 }
 
 footer {
@@ -82,6 +99,10 @@ footer {
 #login {
   flex-grow: 0;
   margin: auto;
+  border: 1px solid #00FF9C;
+  border-radius: 1.5rem;
+  padding: 0 1rem;
+  box-shadow: -0.125rem -0.125rem 1rem #72FFC8;
 }
 
 #login h1 {
@@ -114,4 +135,37 @@ input:focus-visible {
   border-color: #72FFC8;
 
   outline: none;
+}
+
+.toolbox {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-top: auto;
+}
+
+.flex-grow {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tools {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+section {
+  border: 1px dashed #00FF9C;
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+}
+
+section p {
+  margin: auto 0;
 }

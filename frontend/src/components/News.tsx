@@ -14,17 +14,15 @@ export default function News() {
   return (
     <article>
       <h2>Notícias</h2>
-      <div>
-        {token == "" && <p>Faça o login para ler as notícias</p>}
-        {token != "" && <NewsTable />}
-      </div>
+      {token == "" && <p>Faça o login para ler as notícias</p>}
+      {token != "" && <NewsTable />}
     </article>
   )
 }
 
 function NewsTable() {
   const { token } = useGlobalContext()
-  const { data, refetch } = useQuery('news',
+  const { data, refetch, isLoading } = useQuery('news',
     () => axios.get(url, { headers: { "Authorization": `Bearer ${token}` } }))
 
   const [{ title, content }, setNew] = useState(clean)
@@ -37,7 +35,6 @@ function NewsTable() {
         setNew(clean)
         setSelection("")
         refetch()
-
       })
   }
 
@@ -61,30 +58,40 @@ function NewsTable() {
   }
   return (
     <>
-      <button onClick={() => refetch()}>Recarregar</button>
-      {/* {JSON.stringify(data?.data)} */}
-      {data?.data.map((i: { title: string, content: string, id: string }, k: string) => {
-        return (
-          <div key={k as Key} onClick={() => {
-            // setNew({ title: i.title, content: i.content })
-            setSelection(i.id)
-          }}>
-            <span>Title: <h3>{i.title} {selected == i.id ? " selected" : ""}</h3></span>
-            <p>{i.content}</p>
-          </div>)
-      })}
+      <button onClick={() => refetch()} disabled={isLoading}>{isLoading ? "Carregando..." : "Recarregar"}</button>
+      <div>
+        {/* {JSON.stringify(data?.data)} */}
+        {data?.data.map((i: { title: string, content: string, id: string }, k: string) => {
+          return (
+            <section key={k as Key} onClick={() => {
+              // setNew({ title: i.title, content: i.content })
+              setSelection(i.id)
+            }}>
+              <div>
+                <span>Titulo:</span>
+                <h3>{i.title} {selected == i.id ? " selected" : ""}</h3>
+              </div>
+              <p>{i.content}</p>
+            </section>)
+        })}
+      </div>
 
       {token != "" && (
-        <>
-          <h2>Toolbox</h2>
-          <h3>Título</h3>
-          <input type="text" onChange={(event) => setNew({ content, title: event.target.value })} />
-          <h3>Conteúdo</h3>
-          <input type="text" onChange={(event) => setNew({ title, content: event.target.value })} />
-          <button onClick={() => nova()} disabled={title == "" || content == ""}>Nova</button>
-          <button onClick={() => remove()} disabled={selected == ""}>Remover</button>
-          <button onClick={() => editar()} disabled={selected == ""}>Editar</button>
-        </>
+        <div className="toolbox">
+          <div>
+            <h3>Título</h3>
+            <input type="text" onChange={(event) => setNew({ content, title: event.target.value })} />
+          </div>
+          <div className="flex-grow">
+            <h3>Conteúdo</h3>
+            <input type="text" onChange={(event) => setNew({ title, content: event.target.value })} />
+          </div>
+          <div className="tools">
+            <button onClick={() => nova()} disabled={title == "" || content == ""}>Nova</button>
+            <button onClick={() => remove()} disabled={selected == ""}>Remover</button>
+            <button onClick={() => editar()} disabled={selected == ""}>Editar</button>
+          </div>
+        </div>
       )}
     </>
   )
