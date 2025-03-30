@@ -28,6 +28,7 @@ function NewsTable() {
   const [{ title, content }, setNew] = useState(clean)
   const [selected, setSelection] = useState("")
 
+  console.log(data?.data);
   const nova = () => {
     axios
       .post(url, { title, content }, { headers: { "Authorization": `Bearer ${token}` } })
@@ -61,21 +62,17 @@ function NewsTable() {
       <button onClick={() => refetch()} disabled={isLoading}>{isLoading ? "Carregando..." : "Recarregar"}</button>
       <div className="news">
         {/* {JSON.stringify(data?.data)} */}
-        {data?.data.map((i: { title: string, content: string, id: string }, k: string) => {
-          return (
-            <section
-              className={`${selected == i.id ? " selected" : ""}`}
-              key={k as Key} onClick={() => {
-                // setNew({ title: i.title, content: i.content })
-                setSelection(i.id)
-              }}>
-              <div>
-                <span>Titulo:</span>
-                <h3>{i.title} </h3>
-              </div>
-              <p>{i.content}</p>
-            </section>)
-        })}
+        {data?.data.map((i: { title: string, content: string, id: string, User: { name: string } }, k: string) => (
+          <section
+            className={`${selected == i.id ? " selected" : ""}`}
+            key={k as Key} onClick={() => {
+              // setNew({ title: i.title, content: i.content })
+              setSelection(i.id)
+            }}>
+            <div><span>Titulo:</span><h3>{i.title} </h3></div>
+            <p>{i.content}</p>
+            <div><span>Autor:</span><h3>{i.User.name} </h3></div>
+          </section>))}
       </div>
 
       {token != "" && (
