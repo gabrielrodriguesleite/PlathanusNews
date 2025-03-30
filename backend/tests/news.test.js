@@ -1,15 +1,20 @@
 const request = require("supertest")
 const app = require("../server")
-const { sequelize, News, Author } = require("../src/models")
-
-jest.mock('../src/middlewares/authMiddleware', () => jest.fn((req, res, next) => next()))
+const { sequelize, News, User } = require("../src/models")
+const { registerService, loginService } = require("../src/services/authServices")
 
 describe("API de Notícias", () => {
-  let author;
+  let token;
+  let user;
+  const name = "Um usuário"
+  const email = "usuario@email.com"
+  const password = "12345678"
 
   beforeAll(async () => {
     await sequelize.sync({ force: true })
-    author = await Author.create({ name: "Author Teste" })
+    await registerService({ name, email, password })
+    token = await loginService({ email, password })
+    user = await User.findOne({ where: { email } })
   })
 
   afterAll(async () => {
@@ -31,8 +36,7 @@ describe("API de Notícias", () => {
       const res = await request(app).post("/news").send({
         title: "Título Teste",
         content: "Conteúdo da notícia...",
-        authorId: author.id,
-      })
+      }).auth(token, { type: "bearer" })
 
       expect(res.status).toBe(201)
       expect(res.body).toHaveProperty("news")
@@ -42,21 +46,10 @@ describe("API de Notícias", () => {
     it("Deve falhar ao criar uma notícia sem título", async () => {
       const res = await request(app).post('/news').send({
         content: "Texto válido",
-        authorId: author.id,
-      })
+      }).auth(token, { type: "bearer" })
 
       expect(res.status).toBe(400)
       expect(res.body.error).toBe("O título é obrigatório.")
-    })
-
-    it("Deve falhar ao criar uma notícia sem autor", async () => {
-      const res = await request(app).post('/news').send({
-        title: "Notícia sem autor",
-        content: "Texto válido",
-      })
-
-      expect(res.status).toBe(400)
-      expect(res.body.error).toBe("O autor é obrigatório.")
     })
   })
 
@@ -67,7 +60,7 @@ describe("API de Notícias", () => {
       noticia = await News.create({
         title: "Notícia Antiga",
         content: "Conteúdo original",
-        authorId: author.id,
+        userId: user.id
       })
     })
 
@@ -75,8 +68,7 @@ describe("API de Notícias", () => {
       const res = await request(app).put(`/news/${noticia.id}`).send({
         title: "Notícia Atualizada",
         content: "Novo conteúdo",
-        authorId: author.id,
-      })
+      }).auth(token, { type: "bearer" })
 
       expect(res.status).toBe(200);
       expect(res.body.news.title).toBe("Notícia Atualizada")
@@ -86,8 +78,7 @@ describe("API de Notícias", () => {
       const res = await request(app).put("/news/9999").send({
         title: "Título Novo",
         content: "Novo Conteúdo",
-        authorId: author.id,
-      })
+      }).auth(token, { type: "bearer" })
 
       expect(res.status).toBe(404);
       expect(res.body.error).toBe("Notícia não encontrada.")
@@ -101,17 +92,17 @@ describe("API de Notícias", () => {
       noticiaParaExcluir = await News.create({
         title: "Para excluir",
         content: "Texto qualquer",
-        authorId: author.id,
+        userId: user.id
       })
     })
 
     it("Deve excluir uma notícia existente", async () => {
-      const res = await request(app).delete(`/news/${noticiaParaExcluir.id}`)
+      const res = await request(app).delete(`/news/${noticiaParaExcluir.id}`).auth(token, { type: "bearer" })
       expect(res.status).toBe(204)
     })
 
     it("Deve falhar ao excluir uma notícia inexistente", async () => {
-      const res = await request(app).delete("/news/9999")
+      const res = await request(app).delete("/news/9999").auth(token, { type: "bearer" })
       expect(res.status).toBe(404);
       expect(res.body.error).toBe("Notícia não encontrada.")
     })
@@ -121,26 +112,24 @@ describe("API de Notícias", () => {
   describe("🔍 - Buscar notícias", () => {
     beforeAll(async () => {
       await News.bulkCreate([
-        { title: "Notícia A", content: "Texto A", authorId: author.id },
-        { title: "Notícia B", content: "Texto B", authorId: author.id },
-        { title: "Notícia C", content: "Texto C", authorId: author.id },
-        { title: "Notícia D", content: "Texto D", authorId: author.id },
+        { title: "Notícia A", content: "Texto A", userId: user.id },
+        { title: "Notícia B", content: "Texto B", userId: user.id },
+        { title: "Notícia C", content: "Texto C", userId: user.id },
+        { title: "Notícia D", content: "Texto D", userId: user.id },
       ])
     })
 
     it("Deve listar todas as notícias", async () => {
-      const res = await request(app).get("/news")
+      const res = await request(app).get("/news").auth(token, { type: "bearer" })
       expect(res.status).toBe(200);
       expect(res.body.length).toBeGreaterThanOrEqual(4)
     })
 
     it("Deve filtar notícias pelo título", async () => {
-      const res = await request(app).get("/news?title=Notícia A")
+      const res = await request(app).get("/news?title=Notícia A").auth(token, { type: "bearer" })
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(1)
       expect(res.body[0].title).toBe("Notícia A")
     })
   })
-
-
 })
