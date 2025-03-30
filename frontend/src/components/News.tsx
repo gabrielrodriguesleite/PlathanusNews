@@ -59,7 +59,7 @@ function NewsTable() {
   return (
     <>
       <button onClick={() => refetch()} disabled={isLoading}>{isLoading ? "Carregando..." : "Recarregar"}</button>
-      <div>
+      <div className="news">
         {/* {JSON.stringify(data?.data)} */}
         {data?.data.map((i: { title: string, content: string, id: string }, k: string) => {
           return (
