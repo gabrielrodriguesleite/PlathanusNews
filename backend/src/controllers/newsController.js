@@ -1,23 +1,20 @@
-const { News, Author } = require("../models")
+const { News, User } = require("../models");
+const { serviceCreateNews } = require("../services/newsServices");
 
 exports.createNews = async (req, res) => {
-  const { title, content, authorId } = req.body;
+  const { userId } = req
+  const { title, content } = req.body;
 
   if (!title || title == "") {
     return res.status(400).json({ error: "O título é obrigatório." })
   }
 
-  if (!authorId) {
-    return res.status(400).json({ error: "O autor é obrigatório." })
-  }
-
   try {
-    const author = await Author.findByPk(authorId)
-    if (!author) {
+    const newNews = await serviceCreateNews({ userId, title, content })
+    if (!newNews) {
       return res.status(400).json({ error: "Autor não encontrado." })
     }
 
-    const newNews = await News.create({ title, content, authorId })
 
     return res.status(201).json({ message: "Notícia criada com sucesso.", news: newNews })
 
@@ -41,7 +38,7 @@ exports.getAllNews = async (req, res) => {
     }
 
     const newsList = await News.findAll({
-      include: [{ model: Author, attributes: ["name"] }],
+      include: [{ model: User, attributes: ["name"] }],
     })
     return res.status(200).json(newsList)
 
@@ -56,7 +53,7 @@ exports.getNewsById = async (req, res) => {
 
   try {
     const news = await News.findByPk(id, {
-      include: [{ model: Author, attributes: ["name"] }],
+      include: [{ model: User, attributes: ["name"] }],
     })
 
     if (!news) {
@@ -72,8 +69,9 @@ exports.getNewsById = async (req, res) => {
 }
 
 exports.updateNews = async (req, res) => {
+  const { userId } = req
   const { id } = req.params
-  const { title, content, authorId } = req.body
+  const { title, content } = req.body
 
   try {
     const news = await News.findByPk(id)
@@ -81,14 +79,14 @@ exports.updateNews = async (req, res) => {
       return res.status(404).json({ error: "Notícia não encontrada." })
     }
 
-    const author = await Author.findByPk(authorId)
-    if (!author) {
+    const user = await User.findByPk(userId)
+    if (!user) {
       return res.status(404).json({ error: "Autor não encontrado." })
     }
 
     news.title = title || news.title
     news.content = content || news.content
-    news.authorId = authorId || news.authorId
+    news.userId = userId || news.userId
 
     await news.save()
 
