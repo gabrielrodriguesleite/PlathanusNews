@@ -1,3 +1,9 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   font-family: "Space Grotesk", sans-serif;
   font-size: 12px;
@@ -11,12 +17,6 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 button {
@@ -65,11 +65,13 @@ header h1::first-letter {
 
 main {
   max-width: 1200px;
-  margin: 0 10rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 1rem;
 }
 
 article {
@@ -168,4 +170,8 @@ section {
 
 section p {
   margin: auto 0;
+}
+
+.selected {
+  border-style: solid;
 }
