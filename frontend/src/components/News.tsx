@@ -63,13 +63,15 @@ function NewsTable() {
         {/* {JSON.stringify(data?.data)} */}
         {data?.data.map((i: { title: string, content: string, id: string }, k: string) => {
           return (
-            <section key={k as Key} onClick={() => {
-              // setNew({ title: i.title, content: i.content })
-              setSelection(i.id)
-            }}>
+            <section
+              className={`${selected == i.id ? " selected" : ""}`}
+              key={k as Key} onClick={() => {
+                // setNew({ title: i.title, content: i.content })
+                setSelection(i.id)
+              }}>
               <div>
                 <span>Titulo:</span>
-                <h3>{i.title} {selected == i.id ? " selected" : ""}</h3>
+                <h3>{i.title} </h3>
               </div>
               <p>{i.content}</p>
             </section>)
@@ -89,7 +91,7 @@ function NewsTable() {
           <div className="tools">
             <button onClick={() => nova()} disabled={title == "" || content == ""}>Nova</button>
             <button onClick={() => remove()} disabled={selected == ""}>Remover</button>
-            <button onClick={() => editar()} disabled={selected == ""}>Editar</button>
+            <button onClick={() => editar()} disabled={selected == "" || title == "" || content == ""}>Editar</button>
           </div>
         </div>
       )}
