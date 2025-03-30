@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   })
 
   News.associate = (models) => {
-    News.belongsTo(models.Author, { foreignKey: "authorId", allowNull: false })
+    News.belongsTo(models.User, { foreignKey: "UserId", allowNull: false })
   }
 
   return News
