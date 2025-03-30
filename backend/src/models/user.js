@@ -6,5 +6,9 @@ module.exports = (sequelize, DataTypes) => {
     password: { type: DataTypes.STRING, allowNull: false },
   })
 
+  User.associate = (models) => {
+    User.hasMany(models.News, { foreingKey: "id", onDelete: "CASCADE" })
+  }
+
   return User;
 }
