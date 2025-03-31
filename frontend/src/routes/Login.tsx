@@ -42,12 +42,12 @@ export default function Login() {
   useEffect(() => {
     if (error) {
       console.error(error)
-      alert('Erro ao registrar. Tente novamente mais tarde.')
+      alert('Erro ao entrar. Tente novamente mais tarde.')
       navigate('/')
     }
   }, [error, navigate])
   return (
-    <div id="login">
+    <div className="dialog">
       <h1>Login</h1>
       <h2>email</h2>
       <input type="email" onChange={(event) => {

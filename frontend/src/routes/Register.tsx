@@ -42,7 +42,7 @@ export default function Register() {
   }, [mutation.error, navigate])
 
   return (
-    <div id="login">
+    <div className="dialog">
       <h1>Registrar</h1>
       <h2>Nome</h2>
       <input type="text" onChange={(event) => {

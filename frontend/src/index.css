@@ -108,7 +108,7 @@ footer {
   text-align: center;
 }
 
-#login {
+.dialog {
   flex-grow: 0;
   margin: auto;
   border: 1px solid #00FF9C;
@@ -117,17 +117,17 @@ footer {
   box-shadow: -0.125rem -0.125rem 1rem #72FFC8;
 }
 
-#login h1 {
+.dialog h1 {
   text-align: center;
   padding: 2rem 0;
 
 }
 
-#login input {
+.dialog input {
   margin: 0 0 1rem 0;
 }
 
-#login div {
+.dialog div {
   display: flex;
   padding: 2rem 0;
   justify-content: center;
