@@ -1,16 +1,11 @@
 import { useNavigate } from "react-router"
-import { useGlobalContext } from "../Context"
+import { useAuth } from "../contexts/useAuth"
 
 export default function Header() {
   const navigate = useNavigate()
-  const { user, setState } = useGlobalContext()
+  const { isAuthenticated, user, signOut } = useAuth()
 
-  const logout = () => {
-    setState({ token: "", user: { name: "", email: "" } })
-    localStorage.clear()
-  }
-
-  if (user.email == "") {
+  if (!isAuthenticated) {
     return (
       <header>
         <h1>Plathanus News</h1>
@@ -25,8 +20,8 @@ export default function Header() {
     <header>
       <h1>Plathanus News</h1>
       <div className="expand"></div>
-      <div className="p-box"><p>{user.email}</p></div>
-      <button onClick={() => logout()}>Logout</button>
+      <div className="p-box"><p>{user?.name}</p></div>
+      <button onClick={() => signOut()}>Logout</button>
     </header>
   )
 }
