@@ -3,14 +3,6 @@ import { useNavigate } from "react-router";
 import { AuthContext } from "./AuthContext";
 import axios, { AxiosError } from "axios";
 
-
-const URL_LOGIN = 'http://localhost:3000/auth/login'
-const URL_VERIFY = 'http://localhost:3000/news'
-const URL_REGISTER = 'http://localhost:3000/auth/register'
-
-const LOCAL_STORAGE_TOKEN = '@app:token'
-const LOCAL_STORAGE_USER = '@app:user'
-
 export interface User {
   id: string,
   name: string,
@@ -33,6 +25,17 @@ export interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/'
+  console.log('VITE_API_URL: ' + BASE_URL)
+
+  const URL_LOGIN = BASE_URL + 'auth/login'
+  const URL_VERIFY = BASE_URL + 'auth/verify'
+  const URL_REGISTER = BASE_URL + 'auth/register'
+
+  const LOCAL_STORAGE_TOKEN = '@app:token'
+  const LOCAL_STORAGE_USER = '@app:user'
+
+
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(true); // inicia true enquanto verifica storage
@@ -72,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     finally {
       setLoading(false);
     }
-  }, [])
+  }, [URL_VERIFY])
 
   //useCallback para evitar recriações desnecessárias da função
   const signIn = useCallback(async (credentials: { email: string; password: string }) => {
@@ -96,7 +99,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [URL_LOGIN])
 
   const signOut = useCallback(() => {
     setLoading(true)
@@ -126,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false)
     }
 
-  }, [signIn])
+  }, [URL_REGISTER, signIn])
 
   const contextValue: AuthContextData = {
     isAuthenticated: !!token && !!user,
