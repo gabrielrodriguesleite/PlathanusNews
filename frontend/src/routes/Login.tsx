@@ -1,15 +1,9 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { useMutation } from "react-query"
+import { useState } from "react"
 import { useNavigate } from "react-router"
-import { useGlobalContext } from "../Context"
+import { useAuth } from "../contexts/useAuth"
+import { Navigate } from "react-router"
 
-type loginType = {
-  email: string
-  password: string
-}
 
-const url = 'http://localhost:3000/auth/login'
 const initialState = { email: "", password: "" }
 const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
@@ -18,34 +12,16 @@ export default function Login() {
   const [credentials, setCredentials] = useState(initialState)
   const disabled = credentials.password.length < 8 || !emailRegex.test(credentials.email)
 
-  const { setState } = useGlobalContext()
-  const { isSuccess, error, mutate, data } = useMutation((newLogin: loginType) => axios.post(url, newLogin))
-  const login = () => mutate(credentials)
+  const { signIn, isAuthenticated } = useAuth()
 
-  useEffect(() => {
-    if (isSuccess) {
-      console.log(data.data.message)
-      localStorage.clear()
-      localStorage.setItem('token', data.data.token)
-      localStorage.setItem('user', JSON.stringify(credentials))
-      setState({
-        token: data.data.token,
-        user: {
-          name: "",
-          email: credentials.email
-        }
-      })
-      navigate('/')
-    }
-  }, [isSuccess, data, credentials, navigate, setState])
+  function login() {
+    signIn(credentials)
+  }
 
-  useEffect(() => {
-    if (error) {
-      console.error(error)
-      alert('Erro ao entrar. Tente novamente mais tarde.')
-      navigate('/')
-    }
-  }, [error, navigate])
+  if (isAuthenticated) {
+    return <Navigate to={'/'} />
+  }
+
   return (
     <div className="dialog">
       <h1>Login</h1>
