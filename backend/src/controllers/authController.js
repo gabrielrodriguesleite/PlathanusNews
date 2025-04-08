@@ -38,5 +38,8 @@ exports.login = async (req, res) => {
     console.error(error)
     return res.status(500).json({ message: "Erro interno do servidor" })
   }
+}
 
+exports.verify = async (_, res) => {
+  return res.status(200).json({ message: "Token válido" })
 }
