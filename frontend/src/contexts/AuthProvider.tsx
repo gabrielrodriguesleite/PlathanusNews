@@ -26,7 +26,6 @@ export interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/'
-  console.log('VITE_API_URL: ' + BASE_URL)
 
   const URL_LOGIN = BASE_URL + 'auth/login'
   const URL_VERIFY = BASE_URL + 'auth/verify'
@@ -48,33 +47,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   useEffect(() => {
-    try {
-      async function l() {
-        const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN)
-        const storedUser = localStorage.getItem(LOCAL_STORAGE_USER)
 
-        if (storedToken && storedUser) {
+    const storedToken = localStorage.getItem(LOCAL_STORAGE_TOKEN)
+    const storedUser = localStorage.getItem(LOCAL_STORAGE_USER)
+    const config = { headers: { "Authorization": `Bearer ${storedToken}` } }
+    axios.get(URL_VERIFY, config)
+      .then((resp) => {
+        if (resp.status == 200) {
+          setUser(JSON.parse(storedUser!))
           setToken(storedToken)
-          setUser(JSON.parse(storedUser))
-
-          //valida token com api
-          const data = await axios.get(URL_VERIFY, { headers: { "Authorization": `Bearer ${storedToken}` } })
-          if (data.status != 200) {
-            throw new Error('Invalid credentials, please login again.')
-          }
         }
-      }
-      l();
-    }
-
-    catch (error) {
-      console.error(error)
-      cleanAuth()
-    }
-
-    finally {
-      setLoading(false);
-    }
+      })
+      .catch((error) => {
+        console.error(error)
+        cleanAuth()
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [URL_VERIFY])
 
   //useCallback para evitar recriações desnecessárias da função
