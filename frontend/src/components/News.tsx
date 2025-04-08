@@ -1,7 +1,7 @@
-import { useQuery } from "react-query"
-import { useGlobalContext } from "../Context"
 import axios from "axios"
 import { Key, useState } from "react"
+import { useQuery } from "react-query"
+import { useAuth } from "../contexts/useAuth"
 
 
 const url = "http://localhost:3000/news"
@@ -9,19 +9,18 @@ const url = "http://localhost:3000/news"
 const clean = { title: "", content: "" }
 
 export default function News() {
-  const { token } = useGlobalContext()
-
+  const { isAuthenticated } = useAuth()
   return (
     <article>
       <h2>Notícias</h2>
-      {token == "" && <p>Faça o login para ler as notícias</p>}
-      {token != "" && <NewsTable />}
+      {!isAuthenticated && <p>Faça o login para ler as notícias</p>}
+      {isAuthenticated && <NewsTable />}
     </article>
   )
 }
 
 function NewsTable() {
-  const { token } = useGlobalContext()
+  const { token } = useAuth()
   const { data, refetch, isLoading } = useQuery('news',
     () => axios.get(url, { headers: { "Authorization": `Bearer ${token}` } }))
 
