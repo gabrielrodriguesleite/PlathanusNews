@@ -20,5 +20,5 @@ exports.loginService = async ({ email, password }) => {
     return
   }
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" })
-  return token
+  return { token, user: { name: user.name, email: user.email } }
 }

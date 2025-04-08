@@ -1,8 +1,6 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { useMutation } from "react-query"
-import { useNavigate } from "react-router"
-import { useGlobalContext } from "../Context"
+import { useState } from "react"
+import { Navigate, useNavigate } from "react-router"
+import { useAuth } from "../contexts/useAuth"
 
 type registerType = {
   name: string
@@ -10,36 +8,23 @@ type registerType = {
   password: string
 }
 
-const url = 'http://localhost:3000/auth/register'
 const initialState = { name: "", email: "", password: "" }
 const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 
 export default function Register() {
   const navigate = useNavigate()
-  const [credentials, setCredentials] = useState(initialState)
-  const mutation = useMutation((newReg: registerType) => axios.post(url, newReg))
-  const register = () => mutation.mutate(credentials)
+  const [credentials, setCredentials] = useState<registerType>(initialState)
   const disable = credentials.name.length < 3 || !emailRegex.test(credentials.email) || credentials.password.length < 8
-  const { setState } = useGlobalContext()
+  const { signUp, isAuthenticated } = useAuth()
 
-  useEffect(() => {
-    if (mutation.isSuccess) {
-      console.log(mutation.data.data.message)
-      localStorage.clear()
-      localStorage.setItem('token', mutation.data.data.token)
-      localStorage.setItem('user', JSON.stringify(credentials))
-      setState({ token: mutation.data.data.token, user: credentials })
-      navigate('/')
-    }
-  }, [mutation.isSuccess, mutation.data, credentials, navigate, setState])
 
-  useEffect(() => {
-    if (mutation.error) {
-      console.error(mutation.error)
-      alert('Erro ao registrar. Tente novamente mais tarde.')
-      navigate('/')
-    }
-  }, [mutation.error, navigate])
+  const register = async () => {
+    await signUp(credentials)
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to={'/'} />
+  }
 
   return (
     <div className="dialog">

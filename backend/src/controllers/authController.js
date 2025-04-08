@@ -24,16 +24,22 @@ exports.login = async (req, res) => {
   const { email, password } = req.body
 
   try {
-    const token = await loginService({ email, password })
+    const credentials = await loginService({ email, password })
 
-    if (!token) {
+    if (!credentials) {
       return res.status(401).json({ error: "Credenciais inválidas." })
     }
 
-    return res.status(200).json({ message: "Login bem-sucedido", token })
+    const { token, user } = credentials
+    const data = { token, user: { name: user.name, email: user.email } }
+
+    return res.status(200).json({ message: "Login bem-sucedido", ...data })
   } catch (error) {
     console.error(error)
     return res.status(500).json({ message: "Erro interno do servidor" })
   }
+}
 
+exports.verify = async (_, res) => {
+  return res.status(200).json({ message: "Token válido" })
 }
