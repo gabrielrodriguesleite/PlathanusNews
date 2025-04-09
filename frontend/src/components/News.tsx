@@ -19,9 +19,9 @@ function NewsTable() {
   const [{ title, content }, setNew] = useState(clean)
   const [selected, setSelection] = useState("")
   const { isAuthenticated } = useAuth()
-  const { isLoading, refetch, news } = useNews()
+  const { isLoading, refetch, news, add } = useNews()
 
-  const nova = () => { }
+  const nova = () => { add({ title, content }) }
   const remove = () => { }
   const editar = () => { }
 

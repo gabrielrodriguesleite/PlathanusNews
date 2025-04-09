@@ -14,6 +14,7 @@ interface News {
 export interface NewsContextData {
   news: News[];
   refetch: () => void;
+  add: ({ title, content }: { title: string, content: string }) => void;
   isLoading: boolean;
 }
 
@@ -51,10 +52,27 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     }
   }, [isAuthenticated, refetch])
 
+  const add = useCallback(({ title, content }: { title: string; content: string }) => {
+    const config = { headers: { "Authorization": `Bearer ${token}` } }
+    const data = { title, content }
+    axios.post(URL_NEWS, data, config)
+      .then(resp => {
+        if (resp.status != 201) {
+          throw new Error(resp.data.error)
+        }
+      })
+      .catch(error => {
+        console.error(error)
+        alert("Erro ao adicionar notícia.")
+      })
+      .finally(() => refetch())
+  }, [URL_NEWS, refetch, token])
+
   const contextValue: NewsContextData = {
     news: loadedNews,
     isLoading: loading,
     refetch,
+    add,
   }
 
   return (
