@@ -15,6 +15,7 @@ export interface NewsContextData {
   news: News[];
   refetch: () => void;
   add: ({ title, content }: { title: string, content: string }) => void;
+  del: (id: number) => void;
   isLoading: boolean;
 }
 
@@ -68,11 +69,27 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
       .finally(() => refetch())
   }, [URL_NEWS, refetch, token])
 
+  const del = useCallback((id: number) => {
+    const config = { headers: { "Authorization": `Bearer ${token}` } }
+    axios.delete(URL_NEWS + `/${id}`, config)
+      .then(resp => {
+        if (resp.status != 204) {
+          throw new Error(resp.data.error)
+        }
+      })
+      .catch(error => {
+        console.error(error)
+        alert("Erro ao remover notícia.")
+      })
+      .finally(() => refetch())
+  }, [URL_NEWS, refetch, token])
+
   const contextValue: NewsContextData = {
     news: loadedNews,
     isLoading: loading,
     refetch,
     add,
+    del,
   }
 
   return (
