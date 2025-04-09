@@ -21,9 +21,18 @@ function NewsTable() {
   const { isAuthenticated } = useAuth()
   const { isLoading, refetch, news, add, del, update } = useNews()
 
-  const nova = () => { add({ title, content }) }
-  const remove = () => { del(+selected) }
-  const editar = () => { update(+selected, { title, content }) }
+  const nova = () => {
+    add({ title, content })
+    setNew(clean)
+  }
+  const remove = () => {
+    del(+selected)
+    setSelection("")
+  }
+  const editar = () => {
+    update(+selected, { title, content })
+    setNew(clean)
+  }
 
   return (
     <>
