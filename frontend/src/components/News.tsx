@@ -1,12 +1,6 @@
-import axios from "axios"
 import { Key, useState } from "react"
-import { useQuery } from "react-query"
 import { useAuth } from "../contexts/useAuth"
-
-
-const url = "http://localhost:3000/news"
-
-const clean = { title: "", content: "" }
+import { useNews } from "../contexts/useNews"
 
 export default function News() {
   const { isAuthenticated } = useAuth()
@@ -19,75 +13,67 @@ export default function News() {
   )
 }
 
-function NewsTable() {
-  const { token } = useAuth()
-  const { data, refetch, isLoading } = useQuery('news',
-    () => axios.get(url, { headers: { "Authorization": `Bearer ${token}` } }))
+const clean = { title: "", content: "" }
 
+function NewsTable() {
   const [{ title, content }, setNew] = useState(clean)
   const [selected, setSelection] = useState("")
+  const { isAuthenticated } = useAuth()
+  const { isLoading, refetch, news, add, del, update } = useNews()
 
-  console.log(data?.data);
   const nova = () => {
-    axios
-      .post(url, { title, content }, { headers: { "Authorization": `Bearer ${token}` } })
-      .then(() => {
-        setNew(clean)
-        setSelection("")
-        refetch()
-      })
+    add({ title, content })
+    setNew(clean)
   }
-
   const remove = () => {
-    axios
-      .delete(url + `/${selected}`, { headers: { "Authorization": `Bearer ${token}` } })
-      .then(() => {
-        setNew(clean)
-        setSelection("")
-        refetch()
-      })
+    del(+selected)
+    setSelection("")
+  }
+  const editar = () => {
+    update(+selected, { title, content })
+    setNew(clean)
   }
 
-  const editar = () => {
-    axios.put(url + `/${selected}`, { title, content }, { headers: { "Authorization": `Bearer ${token}` } })
-      .then(() => {
-        setNew(clean)
-        setSelection("")
-        refetch()
-      })
-  }
   return (
     <>
       <button onClick={() => refetch()} disabled={isLoading}>{isLoading ? "Carregando..." : "Recarregar"}</button>
-      <div className="news">
-        {/* {JSON.stringify(data?.data)} */}
-        {data?.data.map((i: { title: string, content: string, id: string, User: { name: string } }, k: string) => (
-          <section
-            className={`${selected == i.id ? " selected" : ""}`}
-            key={k as Key} onClick={() => {
-              // setNew({ title: i.title, content: i.content })
-              setSelection(i.id)
-            }}>
-            <div><span>Titulo:</span><h3>{i.title} </h3></div>
-            <p>{i.content}</p>
-            <div><span>Autor:</span><h3>{i.User.name} </h3></div>
-          </section>))}
-      </div>
-
-      {token != "" && (
+      {!!news &&
+        <div className="news">
+          {/* {JSON.stringify(data?.data)} */}
+          {news.map((i, k) => (
+            <section
+              className={`${selected == i.id ? " selected" : ""}`}
+              key={k as Key} onClick={() => {
+                setNew({ title: i.title, content: i.content })
+                setSelection(i.id)
+              }}>
+              <div><span>Titulo:</span><h3>{i.title} </h3></div>
+              <p>{i.content}</p>
+              <div><span>Autor:</span><h3>{i.User.name} </h3></div>
+            </section>))}
+        </div>
+      }
+      {!!news && news.length == 0 && (
+        <div className="news">
+          <section style={{ border: "none" }}>
+            <h3 style={{ margin: "auto", textAlign: "center" }}>Suas notícias aparecerão aqui. Experimente adicionar uma nova!</h3>
+          </section>
+        </div>
+      )}
+      {isAuthenticated && (
         <div className="toolbox">
           <div>
-            <h3>Título</h3>
-            <input type="text" onChange={(event) => setNew({ content, title: event.target.value })} />
+            <h3>título</h3>
+            <input type="text" value={title} onChange={(event) => setNew({ content, title: event.target.value })} />
           </div>
           <div className="flex-grow">
-            <h3>Conteúdo</h3>
-            <input type="text" onChange={(event) => setNew({ title, content: event.target.value })} />
+            <h3>conteúdo</h3>
+            <input type="text" value={content} onChange={(event) => setNew({ title, content: event.target.value })} />
           </div>
           <div className="tools">
-            <button onClick={() => nova()} disabled={title == "" || content == ""}>Nova</button>
-            <button onClick={() => remove()} disabled={selected == ""}>Remover</button>
-            <button onClick={() => editar()} disabled={selected == "" || title == "" || content == ""}>Editar</button>
+            <button onClick={() => nova()} disabled={title == "" || content == ""}>nova</button>
+            <button onClick={() => remove()} disabled={selected == ""}>remover</button>
+            <button onClick={() => editar()} disabled={selected == "" || title == "" || content == ""}>editar</button>
           </div>
         </div>
       )}
