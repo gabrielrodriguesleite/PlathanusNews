@@ -53,6 +53,13 @@ function NewsTable() {
             </section>))}
         </div>
       }
+      {!!news && news.length == 0 && (
+        <div className="news">
+          <section style={{ border: "none" }}>
+            <h3 style={{ margin: "auto", textAlign: "center" }}>Suas notícias aparecerão aqui. Experimente adicionar uma nova!</h3>
+          </section>
+        </div>
+      )}
       {isAuthenticated && (
         <div className="toolbox">
           <div>
