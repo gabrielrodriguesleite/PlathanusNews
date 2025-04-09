@@ -16,6 +16,7 @@ export interface NewsContextData {
   refetch: () => void;
   add: ({ title, content }: { title: string, content: string }) => void;
   del: (id: number) => void;
+  update: (id: number, { title, content }: { title: string, content: string }) => void;
   isLoading: boolean;
 }
 
@@ -79,8 +80,25 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
       })
       .catch(error => {
         console.error(error)
-        alert("Erro ao remover notícia.")
+        alert(`Erro ao remover notícia id: ${id}`)
       })
+      .finally(() => refetch())
+  }, [URL_NEWS, refetch, token])
+
+  const update = useCallback((id: number, { title, content }: { title: string, content: string }) => {
+    const config = { headers: { "Authorization": `Bearer ${token}` } }
+    const data = { title, content }
+    axios.put(URL_NEWS + `/${id}`, data, config)
+      .then(resp => {
+        if (resp.status != 200) {
+          throw new Error(resp.data.error)
+        }
+      })
+      .catch(error => {
+        console.error(error)
+        alert(`Erro ao editar a notícia id: ${id}`)
+      }
+      )
       .finally(() => refetch())
   }, [URL_NEWS, refetch, token])
 
@@ -90,6 +108,7 @@ export const NewsProvider: React.FC<NewsProviderProps> = ({ children }) => {
     refetch,
     add,
     del,
+    update,
   }
 
   return (
